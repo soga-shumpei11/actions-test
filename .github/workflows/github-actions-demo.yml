@@ -12,17 +12,17 @@ jobs:
           set -euo pipefail
           echo "test"
           diff -u <(echo "test") <(echo "test") | STATUS=$?
-          echo STATUS
+          echo $STATUS
       - name: test
         run: |
           set -euo pipefail
           echo "test"
           diff -u <(echo "test") <(echo "test") | STATUS=$?
-          echo STATUS
+          echo $STATUS
         - name: test
         run: |
           set -euo pipefail
           echo "test"
           diff notfound.txt notfounds.txt | STATUS=$?
-          echo STATUS
+          echo $STATUS
       
