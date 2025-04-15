@@ -10,7 +10,7 @@ jobs:
       - name: test
         run: |
           set -euo pipefail
-          $XXX=1
+          XXX=1
           echo $XXX
       #   run: |
 
