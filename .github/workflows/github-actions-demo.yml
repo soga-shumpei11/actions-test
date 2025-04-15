@@ -17,10 +17,10 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: |
-        echo "aaa"
-        diff -u <(echo "aaa") <(echo "bbb") || $STATUS=$?
+          echo "aaa"
+          diff -u <(echo "aaa") <(echo "bbb") || $STATUS=$?
       - run: |
-        set -euo pipefail
-        echo "aaa"
-        diff -u <(echo "aaa") <(echo "bbb") || $STATUS=$?
+          set -euo pipefail
+          echo "aaa"
+          diff -u <(echo "aaa") <(echo "bbb") || $STATUS=$?
       
