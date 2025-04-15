@@ -12,6 +12,11 @@ jobs:
           set -euo pipefail
           XXX=1
           echo $XXX
+      - name: not set
+        run: |
+          # set -euo pipefail
+          XXX=1
+          echo $XXX
       #   run: |
 
       #     echo "test"
