@@ -10,7 +10,8 @@ jobs:
       - name: test
         run: |
           echo "test"
-          diff -u <(echo "test") <(echo "test") | STATUS=$?
+          diff -u <(echo "test") <(echo "test2") | STATUS=$?
+          echo $STATUS
       #   run: |
 
       #     echo "test"
