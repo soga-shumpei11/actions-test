@@ -7,29 +7,20 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: test
+      - name: not set -euo pipefail
+        run: |
+          echo $XXX
+      - name: not set -euo pipefail
         run: |
           set -euo pipefail
           XXX=1
           echo $XXX
-      - name: not set
+      - name: set -euo pipefail
         run: |
-          # set -euo pipefail
-          # XXX=1
+          set -euo pipefail
           echo $XXX
-      #   run: |
-
-      #     echo "test"
-      #     diff -u <(echo "test") <(echo "test") | STATUS=$?
-      #     echo $STATUS
-      # - name: test
-      #   run: |
-      #     echo "test"
-      #     diff -u <(echo "test") <(echo "test") | STATUS=$?
-      #     echo $STATUS
-      #   - name: test
-      #   run: |
-      #     echo "test"
-      #     diff notfound.txt notfounds.txt | STATUS=$?
-      #     echo $STATUS
-      
+      - name: set -euo pipefail
+        run: |
+          set -euo pipefail
+          XXX=1
+          echo $XXX
