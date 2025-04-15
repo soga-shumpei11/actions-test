@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v4
       - name: test
         run: |
-          set -euo pipefail
+          # set -euo pipefail
           XXX=1
           echo $XXX
       - name: not set
