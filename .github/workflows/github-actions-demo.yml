@@ -18,9 +18,9 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: |
           echo "aaa"
-          diff -u <(echo "aaa") <(echo "bbb") || $STATUS=$?
+          diff -u <(echo "aaa") <(echo "bbb") || STATUS=$?
       - run: |
           set -euo pipefail
           echo "aaa"
-          diff -u <(echo "aaa") <(echo "bbb") || $STATUS=$?
+          diff -u <(echo "aaa") <(echo "bbb") || STATUS=$?
       
