@@ -52,8 +52,6 @@ jobs:
     steps:
       - env: 
         OUTPUT1: ${{needs.detect-changed-environments.outputs.matrix}}
-      - name: Check out repository code
-        uses: actions/checkout@v4.2.2
       - name: Get list of changed files
         run: |
           echo "$OUTPUT1"
