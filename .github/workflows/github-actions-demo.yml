@@ -1,10 +1,9 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on:
-  [push]
-  # push:
-  #   paths:
-  #     - 'xxx/*/version.json'
+  push:
+    paths:
+      - 'xxx/*/version.json'
 jobs:
   detect-changed-environments:
     runs-on: ubuntu-latest
