@@ -23,13 +23,13 @@ jobs:
           ENVIRONMENTS=()
           while read file; do
             case "$file" in
-              'xx/dev/version.json')
+              'xxx/dev/version.json')
                 ENVIRONMENTS+=("dev")
                 ;;
-              'xx/stg/version.json')
+              'xxx/stg/version.json')
                 ENVIRONMENTS+=("stg")
                 ;;
-              'xx/prd/version.json')
+              'xxx/prd/version.json')
                 ENVIRONMENTS+=("prd")
                 ;;
             esac
