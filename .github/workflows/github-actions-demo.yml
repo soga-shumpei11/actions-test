@@ -7,6 +7,8 @@ on:
 jobs:
   detect-changed-environments:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4.2.2
@@ -50,7 +52,7 @@ jobs:
     if: ${{ fromJSON(needs.detect-changed-environments.outputs.matrix.environment != null }}
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJson(needs.detect-changed-environments.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.detect-changed-environments.outputs.matrix) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
