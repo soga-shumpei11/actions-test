@@ -42,7 +42,7 @@ jobs:
             echo '{"include":[]}' > matrix.json
           else
             # ENVIRONMENTS配列をJSON配列に変換
-            envs_json=$(printf '%s\n' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)
+            envs_json=$(printf '%s' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)
             echo "{\"environment\": $envs_json}" > matrix.json
           fi
           cat matrix.json
