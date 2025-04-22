@@ -47,15 +47,22 @@ jobs:
           fi
           cat matrix.json
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
-  # job2:
-  #   runs-on: ubuntu-latest
-  #   needs: detect-changed-environments
-  #   steps:
-  #     - env: 
-  #       OUTPUT1: ${{needs.detect-changed-environments.outputs.matrix}}
-  #     - name: Get list of changed files
-  #       run: |
-  #         echo "$OUTPUT1"
+  job2:
+    runs-on: ubuntu-latest
+    needs: detect-changed-environments
+    strategy:
+      matrix:
+        environment: ${{ fromJson(needs.detect-changed-environments.outputs.matrix).environment }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4.2.2
+      - name: Print environment
+        run: echo "Environment: ${{ matrix.environment }}"
+      - name: Run tests
+        run: |
+          # 環境に応じたテストを実行するコマンドをここに記述
+          echo "Running tests for environment: ${{ matrix.environment }}"
+          # 例: ./run_tests.sh ${{ matrix.environment }}
   # job1:
   #   runs-on: ubuntu-latest
   #   # Map a step output to a job output
