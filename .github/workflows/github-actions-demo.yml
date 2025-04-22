@@ -49,10 +49,10 @@ jobs:
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
   process-version-update:
     needs: detect-changed-environments
-    if: ${{ fromJSON(needs.detect-changed-environments.outputs.matrix.environment != null }}
+    if: ${{ fromJson(needs.detect-changed-environments.outputs.matrix.environment != null }}
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJSON(needs.detect-changed-environments.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.detect-changed-environments.outputs.matrix) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
