@@ -5,7 +5,7 @@ on:
     paths:
       - 'xxx/*/version.json'
 jobs:
-  Explore-GitHub-Actions:
+  detect-changed-environments:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -16,3 +16,47 @@ jobs:
           git fetch origin ${{ github.event.before }} --depth=1
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
           cat changed_files.txt
+      - name: Determine changed environments
+        id: set-matrix
+        run: |
+          # 繰り返し処理で環境を取得
+          ENVIRONMENTS=()
+          while read file; do
+            case "$file" in
+              'xx/dev/version.json')
+                ENVIRONMENTS+=("dev")
+                ;;
+              'xx/stg/version.json')
+                ENVIRONMENTS+=("stg")
+                ;;
+              'xx/prd/version.json')
+                ENVIRONMENTS+=("prd")
+                ;;
+            esac
+          done < changed_files.txt
+          # 環境が変更されていない場合は空の配列を出力
+          if [ ${#ENVIRONMENTS[@]} -eq 0 ]; then
+            echo "No environments changed."
+            echo '{"include":[]}' > matrix.json
+            exit 1
+          else
+            printf -v envs '%s,' "${ENVIRONMENTS[@]}"
+            envs_json=$(printf '["%s"]' "${envs%,}")
+            echo "{\"environment\": $envs_json}" > matrix.json
+          fi
+          cat matrix.json
+          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+  process-version-update:
+    needs: detect-changed-environments
+    if: ${{ fromJson(needs.detect-changed-environments.outputs.matrix).environment != null }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.detect-changed-environments.outputs.matrix) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Perform version update for ${{ matrix.environment }}
+        run: |
+          echo "Processing version update for environment: ${{ matrix.environment }}"
+          # ここにバージョン更新処理を記述
