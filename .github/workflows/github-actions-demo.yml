@@ -57,7 +57,8 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4.2.2
       - name: Print environment
-        run: echo "Environment: ${{ matrix.environment }}"
+        run: |
+          echo "Environment: ${{ matrix.environment }}"
       - name: Run tests
         run: |
           # 環境に応じたテストを実行するコマンドをここに記述
