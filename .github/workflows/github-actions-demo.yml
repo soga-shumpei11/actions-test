@@ -9,7 +9,5 @@ jobs:
         uses: actions/checkout@v4
       - name: echo-test
         run: |
-          echo "This is a test of the GitHub Actions workflow."
-          echo "The script will not fail even if there are errors."
-          echo "You can add your own commands here."
+          exit 1
       
