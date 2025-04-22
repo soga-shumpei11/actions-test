@@ -52,7 +52,7 @@ jobs:
     needs: detect-changed-environments
     strategy:
       matrix:
-        environment: ${{ fromJson(needs.detect-changed-environments.outputs.matrix).environment }}
+        environment: ${{ fromJson(needs.detect-changed-environments.outputs.matrix.environment) }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4.2.2
