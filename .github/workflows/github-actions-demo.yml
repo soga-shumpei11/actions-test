@@ -8,16 +8,18 @@ on:
 jobs:
   detect-changed-environments:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.changed-env.outputs.matrix }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4.2.2
       - name: Get list of changed files
-        id: changed_files
         run: |
           git fetch origin ${{ github.event.before }} --depth=1
           git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
           cat changed_files.txt
       - name: Determine changed environments
+        id: changed-env
         run: |
           # 繰り返し処理で環境を取得
           ENVIRONMENTS=()
@@ -45,6 +47,17 @@ jobs:
           fi
           cat matrix.json
           echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
+  job2:
+    runs-on: ubuntu-latest
+    needs: detect-changed-environments
+    steps:
+      - env: 
+        OUTPUT1: ${{needs.detect-changed-environments.outputs.matrix}}
+      - name: Check out repository code
+        uses: actions/checkout@v4.2.2
+      - name: Get list of changed files
+        run: |
+          echo "$OUTPUT1"
   # job1:
   #   runs-on: ubuntu-latest
   #   # Map a step output to a job output
