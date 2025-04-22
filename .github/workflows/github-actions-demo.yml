@@ -1,13 +1,17 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+on:
+  paths:
+  - 'xxx/*/version.json'
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: echo-test
+      - name: Get list of changed files
+        id: changed_files
         run: |
-          exit 1
-      
+          git fetch origin ${{ github.event.before }} --depth=1
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
+          cat ./changed_files.txt
