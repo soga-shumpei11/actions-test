@@ -5,59 +5,22 @@ on:
     paths:
       - 'xxx/*/version.json'
 jobs:
-  detect-changed-environments:
+  job1:
     runs-on: ubuntu-latest
+    # Map a step output to a job output
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      output1: ${{ steps.step1.outputs.test }}
+      output2: ${{ steps.step2.outputs.test }}
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4.2.2
-      - name: Get list of changed files
-        id: changed_files
-        run: |
-          git fetch origin ${{ github.event.before }} --depth=1
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
-          cat changed_files.txt
-      - name: Determine changed environments
-        id: set-matrix
-        run: |
-          # 繰り返し処理で環境を取得
-          ENVIRONMENTS=()
-          while read file; do
-            case "$file" in
-              'xxx/dev/version.json')
-                ENVIRONMENTS+=("dev")
-                ;;
-              'xxx/stg/version.json')
-                ENVIRONMENTS+=("stg")
-                ;;
-              'xxx/prd/version.json')
-                ENVIRONMENTS+=("prd")
-                ;;
-            esac
-          done < changed_files.txt
-          # 環境が変更されていない場合は空の配列を出力
-          if [ ${#ENVIRONMENTS[@]} -eq 0 ]; then
-            echo "No environments changed."
-            echo '{"include":[]}' > matrix.json
-          else
-            printf -v envs '%s,' "${ENVIRONMENTS[@]}"
-            envs_json=$(printf '["%s"]' "${envs%,}")
-            echo "{\"environment\": $envs_json}" > matrix.json
-          fi
-          cat matrix.json
-          echo "matrix=$(cat matrix.json)" >> $GITHUB_OUTPUT
-  process-version-update:
-    needs: detect-changed-environments
-    if: ${{ fromJson(needs.detect-changed-environments.outputs.matrix.environment != null }}
+      - id: step1
+        run: echo "test=hello" >> "$GITHUB_OUTPUT"
+      - id: step2
+        run: echo "test=world" >> "$GITHUB_OUTPUT"
+  job2:
     runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{ fromJson(needs.detect-changed-environments.outputs.matrix) }}
+    needs: job1
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Perform version update for ${{ matrix.environment }}
-        run: |
-          echo "Processing version update for environment: ${{ matrix.environment }}"
-          # ここにバージョン更新処理を記述
+      - env:
+          OUTPUT1: ${{needs.job1.outputs.output1}}
+          OUTPUT2: ${{needs.job1.outputs.output2}}
+        run: echo "$OUTPUT1 $OUTPUT2"
