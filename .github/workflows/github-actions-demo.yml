@@ -41,8 +41,8 @@ jobs:
             echo "No environments changed."
             echo '{"include":[]}' > matrix.json
           else
-            printf -v envs '%s,' "${ENVIRONMENTS[@]}"
-            envs_json=$(printf '["%s"]' "${envs%,}")
+            # ENVIRONMENTS配列をJSON配列に変換
+            envs_json=$(printf '%s\n' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)
             echo "{\"environment\": $envs_json}" > matrix.json
           fi
           cat matrix.json
