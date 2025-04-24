@@ -5,8 +5,10 @@ on:
     paths:
       - 'xxx/*/version.json'
 jobs:
-  test-get-modify-file-path:
+  test-set-modify-file-path:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4.2.2
@@ -35,9 +37,26 @@ jobs:
 
           echo "${ENVIRONMENTS[@]}"
 
-          json=$(jq -n --argjson ENVIRONMENTS "$(printf '%s\n' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)" \
+          json=$(jq -nc --argjson ENVIRONMENTS "$(printf '%s\n' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)" \
             '{"include": [$ENVIRONMENTS | .[] | {env: .}]}')
-          echo "${json}"
+          echo "matrix=${json}" >> $GITHUB_OUTPUT
+  test-get-modify-file-path:
+    runs-on: ubuntu-latest
+    needs: test-set-modify-file-path
+    strategy:
+      matrix:
+        environment: ${{ fromJSON(needs.test-set-modify-file-path.outputs.matrix) }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4.2.2
+      - name: Print environment
+        run: |
+          echo "Environment: ${{ matrix.env }}"
+      - name: Run tests
+        run: |
+          # 環境に応じたテストを実行するコマンドをここに記述
+          echo "Running tests for env: ${{ matrix.env }}"
+          # 例: ./run_tests.sh ${{ matrix.env }}
 
   # test-output:
   #   runs-on: ubuntu-latest
