@@ -39,8 +39,10 @@ jobs:
 
           json=$(jq -nc --argjson ENVIRONMENTS "$(printf '%s\n' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)" \
             '{"include": [$ENVIRONMENTS | .[] | {env: .}]}')
-          echo "matrix=${json}" 
-          echo "matrix=${json}" >> $GITHUB_OUTPUT
+          escaped_json=$(echo "${json}" | jq -sRr @json)
+
+          echo "matrix=${escaped_json}" 
+          echo "matrix=${escaped_json}" >> $GITHUB_OUTPUT
   job2:
     needs: test-set-modify-file-path
     runs-on: ubuntu-latest
