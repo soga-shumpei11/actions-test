@@ -43,7 +43,8 @@ jobs:
 
           # echo "matrix=${escaped_json}" 
           # echo "matrix=${escaped_json}" >> $GITHUB_OUTPUT
-          echo "matrix={\"include\":[{\"env\":\"dev\"},{\"env\":\"prd\"}]}" >> $GITHUB_OUTPUT
+          # echo "matrix={\"include\":[{\"env\":\"dev\"},{\"env\":\"prd\"}]}" >> $GITHUB_OUTPUT
+          echo "matrix={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
   job2:
     needs: test-set-modify-file-path
     runs-on: ubuntu-latest
