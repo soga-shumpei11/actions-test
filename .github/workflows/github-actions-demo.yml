@@ -39,6 +39,7 @@ jobs:
 
           json=$(jq -nc --argjson ENVIRONMENTS "$(printf '%s\n' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)" \
             '{"include": [$ENVIRONMENTS | .[] | {env: .}]}')
+          echo "matrix=${json}" 
           echo "matrix=${json}" >> $GITHUB_OUTPUT
   test-get-modify-file-path:
     runs-on: ubuntu-latest
@@ -51,12 +52,12 @@ jobs:
         uses: actions/checkout@v4.2.2
       - name: Print environment
         run: |
-          echo "Environment: ${{ matrix.env }}"
+          echo "Environment: ${{ matrix.environment }}"
       - name: Run tests
         run: |
           # 環境に応じたテストを実行するコマンドをここに記述
-          echo "Running tests for env: ${{ matrix.env }}"
-          # 例: ./run_tests.sh ${{ matrix.env }}
+          echo "Running tests for env: ${{ matrix.environment }}"
+          # 例: ./run_tests.sh ${{ matrix.environment }}
 
   # test-output:
   #   runs-on: ubuntu-latest
