@@ -55,7 +55,7 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.test-set-modify-file-path.outputs.matrix) }}
     steps:
-      - run: echo "Matrix - Project ${{ matrix.environment }}"
+      - run: echo "Matrix - Project"
   # test-get-modify-file-path:
   #   runs-on: ubuntu-latest
   #   needs: test-set-modify-file-path
