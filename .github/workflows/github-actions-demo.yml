@@ -5,6 +5,33 @@ on:
     paths:
       - 'xxx/*/version.json'
 jobs:
+  test-get-modify-file-path:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4.2.2
+      - name: Get list of changed files
+        id: changed_files
+        run: |
+          git fetch origin ${{ github.event.before }} --depth=1
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
+          cat changed_files.txt
+
+          ENVIRONMENTS=()
+          while read file; do
+            case "$file" in
+              'xxx/dev/version.json')
+                ENVIRONMENTS+=("dev")
+                ;;
+              'xxx/stg/version.json')
+                ENVIRONMENTS+=("stg")
+                ;;
+              'xxx/prd/version.json')
+                ENVIRONMENTS+=("prd")
+                ;;
+            esac
+          echo "${ENVIRONMENTS[@]}"
+
   # test-output:
   #   runs-on: ubuntu-latest
   #   outputs:
@@ -25,20 +52,20 @@ jobs:
   #         OUTPUT1: ${{needs.test-output.outputs.output1}}
   #         OUTPUT2: ${{needs.test-output.outputs.output2}}
   #       run: echo "$OUTPUT1 $OUTPUT2"
-  job1:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - id: set-matrix
-        run: echo "matrix={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
-  job2:
-    needs: job1
-    runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{ fromJSON(needs.job1.outputs.matrix) }}
-    steps:
-      - run: echo "Matrix - Project ${{ matrix.project }}, Config ${{ matrix.config }}"
+  # job1:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     matrix: ${{ steps.set-matrix.outputs.matrix }}
+  #   steps:
+  #     - id: set-matrix
+  #       run: echo "matrix={\"include\":[{\"project\":\"foo\",\"config\":\"Debug\"},{\"project\":\"bar\",\"config\":\"Release\"}]}" >> $GITHUB_OUTPUT
+  # job2:
+  #   needs: job1
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix: ${{ fromJSON(needs.job1.outputs.matrix) }}
+  #   steps:
+  #     - run: echo "Matrix - Project ${{ matrix.project }}, Config ${{ matrix.config }}"
   # detect-changed-environments:
   #   runs-on: ubuntu-latest
   #   outputs:
