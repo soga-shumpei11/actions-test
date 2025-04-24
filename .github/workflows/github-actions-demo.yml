@@ -39,7 +39,7 @@ jobs:
 
           json=$(jq -nc --argjson ENVIRONMENTS "$(printf '%s\n' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)" \
             '{"include": [$ENVIRONMENTS | .[] | {env: .}]}')
-          escaped_json=$(echo "${json}" | jq -sRr @json)
+          escaped_json=$(printf '%s' "$json" | jq -sRr @json)
 
           echo "matrix=${escaped_json}" 
           echo "matrix=${escaped_json}" >> $GITHUB_OUTPUT
