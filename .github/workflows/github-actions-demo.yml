@@ -38,7 +38,7 @@ jobs:
           echo "${ENVIRONMENTS[@]}"
 
           json=$(jq -nc --argjson ENVIRONMENTS "$(printf '%s\n' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)" \
-            '{"include": [$ENVIRONMENTS | .[] | {env: .}]}')
+            '{"include": [$ENVIRONMENTS | .[] | {environment: .}]}')
           escaped_json=$(printf '%s' "$json" | jq -sRr @json)
 
           echo "matrix=${escaped_json}" 
@@ -55,7 +55,7 @@ jobs:
     strategy:
       matrix: ${{ fromJSON(needs.test-set-modify-file-path.outputs.matrix) }}
     steps:
-      - run: echo "Matrix - Project ${{ matrix.env }}"
+      - run: echo "Matrix - Project ${{ matrix.environment }}"
   # test-get-modify-file-path:
   #   runs-on: ubuntu-latest
   #   needs: test-set-modify-file-path
