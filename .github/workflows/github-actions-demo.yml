@@ -41,23 +41,30 @@ jobs:
             '{"include": [$ENVIRONMENTS | .[] | {env: .}]}')
           echo "matrix=${json}" 
           echo "matrix=${json}" >> $GITHUB_OUTPUT
-  test-get-modify-file-path:
-    runs-on: ubuntu-latest
+  job2:
     needs: test-set-modify-file-path
+    runs-on: ubuntu-latest
     strategy:
-      matrix:
-        environment: ${{ fromJSON(needs.test-set-modify-file-path.outputs.matrix) }}
+      matrix: ${{ fromJSON(needs.test-set-modify-file-path.outputs.matrix) }}
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4.2.2
-      - name: Print environment
-        run: |
-          echo "Environment: ${{ matrix.environment }}"
-      - name: Run tests
-        run: |
-          # 環境に応じたテストを実行するコマンドをここに記述
-          echo "Running tests for env: ${{ matrix.environment }}"
-          # 例: ./run_tests.sh ${{ matrix.environment }}
+      - run: echo "Matrix - Project ${{ matrix.env }}
+  # test-get-modify-file-path:
+  #   runs-on: ubuntu-latest
+  #   needs: test-set-modify-file-path
+  #   strategy:
+  #     matrix:
+  #       environment: ${{ fromJSON(needs.test-set-modify-file-path.outputs.matrix) }}
+  #   steps:
+  #     - name: Check out repository code
+  #       uses: actions/checkout@v4.2.2
+  #     - name: Print environment
+  #       run: |
+  #         echo "Environment: ${{ matrix.environment }}"
+  #     - name: Run tests
+  #       run: |
+  #         # 環境に応じたテストを実行するコマンドをここに記述
+  #         echo "Running tests for env: ${{ matrix.environment }}"
+  #         # 例: ./run_tests.sh ${{ matrix.environment }}
 
   # test-output:
   #   runs-on: ubuntu-latest
