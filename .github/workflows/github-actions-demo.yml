@@ -37,6 +37,7 @@ jobs:
 
           json=$(jq -n --argjson ENVIRONMENTS "$(printf '%s\n' "${ENVIRONMENTS[@]}" | jq -R . | jq -s .)" \
             '{"include": [$ENVIRONMENTS | .[] | {env: .}]}')
+          echo "${json}"
 
   # test-output:
   #   runs-on: ubuntu-latest
