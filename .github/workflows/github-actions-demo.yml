@@ -41,8 +41,9 @@ jobs:
             '{"include": [$ENVIRONMENTS | .[] | {env: .}]}')
           escaped_json=$(echo "${json}" | jq -sRr @json)
 
-          echo "matrix=${escaped_json}" 
-          echo "matrix=${escaped_json}" >> $GITHUB_OUTPUT
+          # echo "matrix=${escaped_json}" 
+          # echo "matrix=${escaped_json}" >> $GITHUB_OUTPUT
+          echo "matrix="{\"include\":[{\"env\":\"dev\"},{\"env\":\"prd\"}]}" >> $GITHUB_OUTPUT
   job2:
     needs: test-set-modify-file-path
     runs-on: ubuntu-latest
