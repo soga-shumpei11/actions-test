@@ -208,7 +208,7 @@ jobs:
         id: environments
         run: |
           echo 'environments=["dev", "stg", "prd"]' >> "$GITHUB_OUTPUT"
-  job3:
+  echo-matrix:
     runs-on: ubuntu-latest
     needs: define-matrix
     strategy:
@@ -219,4 +219,24 @@ jobs:
         run: |
           echo "fromJSON ${{ fromJSON(needs.define-matrix.outputs.environments) }}"
           echo "Environment: ${{ matrix.environment }}"
+  define-matrix-json:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.define-environments.outputs.matrix }}
+    steps:
+      - name: Define Environments
+        id: define-environments
+        run: |
+          echo "matrix={\"include\":[{\"environment\":\"foo\",\"version\":\"1.1\"},{\"environment\":\"bar\",\"version\":\"1.2\"}]}" >> $GITHUB_OUTPUT
+  echo-matrix-json:
+    runs-on: ubuntu-latest
+    needs: define-matrix-json
+    strategy:
+      matrix: ${{ fromJSON(needs.define-matrix-json.outputs.matrix) }}
+    steps:
+      - name: Print Environment
+        run: |
+          echo "Environment: ${{ matrix.environment }}"
+          echo "Version: ${{ matrix.version }}"
+
     
