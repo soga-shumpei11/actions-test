@@ -233,7 +233,7 @@ jobs:
           escaped_json=$(printf '%s' "$json" | jq -sRr @json)
           echo "matrix=${escaped_json}" 
 
-          # echo "matrix={\"include\":[{\"environment\":\"foo\",\"version\":\"1.1\"},{\"environment\":\"bar\",\"version\":\"1.2\"}]}" >> $GITHUB_OUTPUT
+          echo "matrix={\"include\":[{\"environment\":\"foo\",\"version\":\"1.1\"},{\"environment\":\"bar\",\"version\":\"1.2\"}]}" >> $GITHUB_OUTPUT
   echo-matrix-json:
     runs-on: ubuntu-latest
     needs: define-matrix-json

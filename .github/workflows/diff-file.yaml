@@ -1,0 +1,37 @@
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on:
+  [push]
+  # push:
+  #   paths:
+  #     - 'xxx/*/version.json'
+jobs:
+    job3:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Check out repository code
+            uses: actions/checkout@v4.2.2
+          - name: Print Environment
+            run: |
+              set -euo pipefail
+
+
+              git fetch origin ${{ github.event.before }} --depth=1
+
+              echo "github.event.before: ${{ github.event.before }}"
+              echo "github.sha: ${{ github.sha }}"
+
+              before_version=$(git show ${{ github.event.before }}:xxx/dev/version.json | jq -r '.version')
+
+              # 過去のコミットのversionを取得
+              before_version=$(git show ${{ github.event.before }}:xxx/dev/version.json | jq -r '.version')
+
+              # 現在のコミットのversionを取得
+              current_version=$(git show ${{ github.sha }}:xxx/dev/version.json | jq -r '.version')
+
+              # バージョンの差を確認
+              if [ "$before_version" != "$current_version" ]; then
+                echo "Version has changed: $before_version -> $current_version"
+              else
+                echo "Version has not changed: $current_version"
+              fi
