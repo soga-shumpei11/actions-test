@@ -55,6 +55,7 @@ jobs:
             fi
   job2:
     needs: job1
+    if: ${{ needs.job1.outputs.matrix != '[]' &&  needs.job1.outputs.matrix != '' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
