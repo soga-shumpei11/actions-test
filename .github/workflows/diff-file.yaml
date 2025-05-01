@@ -1,12 +1,12 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: GitHub Actions Demo2
+run-name: diff-file
 on:
   [push]
   # push:
   #   paths:
   #     - 'xxx/*/version.json'
 jobs:
-    job3:
+    job1:
         runs-on: ubuntu-latest
         steps:
           - name: Check out repository code
@@ -15,23 +15,28 @@ jobs:
             run: |
               set -euo pipefail
 
-
               git fetch origin ${{ github.event.before }} --depth=1
+
+              ENVIRONMENTS=(dev, stg, prd)
+              DETECTED_ENVIRONMENTS=()
 
               echo "github.event.before: ${{ github.event.before }}"
               echo "github.sha: ${{ github.sha }}"
 
-              before_version=$(git show ${{ github.event.before }}:xxx/dev/version.json | jq -r '.version')
+              # 環境ごとに変更があるか確認。
+              for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
+                # 過去、現在のコミットのversionを取得
+                before_version=$(git show ${{ github.event.before }}:xxx/${ENVIRONMENT}/version.json | jq -r '.version')
+                current_version=$(git show ${{ github.sha }}:xxx/${ENVIRONMENT}/version.json | jq -r '.version')
 
-              # 過去のコミットのversionを取得
-              before_version=$(git show ${{ github.event.before }}:xxx/dev/version.json | jq -r '.version')
+                # バージョンの差を確認
+                if [ "$before_version" != "$current_version" ]; then
+                  echo "Version has changed: $before_version -> $current_version"
+                  DETECTED_ENVIRONMENTS+=("$ENVIRONMENT")
+                else
+                  echo "Version has not changed: $current_version"
+                fi
+              done
 
-              # 現在のコミットのversionを取得
-              current_version=$(git show ${{ github.sha }}:xxx/dev/version.json | jq -r '.version')
+              echo "DETECTED_ENVIRONMENTS: ${DETECTED_ENVIRONMENTS[@]}"
 
-              # バージョンの差を確認
-              if [ "$before_version" != "$current_version" ]; then
-                echo "Version has changed: $before_version -> $current_version"
-              else
-                echo "Version has not changed: $current_version"
-              fi
