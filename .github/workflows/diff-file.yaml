@@ -44,9 +44,17 @@ jobs:
             echo "DETECTED_ENVIRONMENTS: ${DETECTED_ENVIRONMENTS[@]}"
 
             # JSON形式に変換して出力
-            envs_json=$(printf '%s\n' "${DETECTED_ENVIRONMENTS[@]}" | jq -R . | jq -s .)
-            echo "envs_json: $envs_json"
-            echo "matrix=$envs_json" >> $GITHUB_OUTPUT
+
+            # 環境が変更されていない場合は空の配列を出力
+            if [ ${#DETECTED_ENVIRONMENTS[@]} -eq 0 ]; then
+              echo "No environments changed."
+              echo 'matrix=[]' > $GITHUB_OUTPUT
+            else
+              # DETECTED_ENVIRONMENTS配列をJSON配列に変換
+              envs_json=$(printf '%s\n' "${DETECTED_ENVIRONMENTS[@]}" | jq -R . | jq -s .)
+              echo "envs_json: $envs_json"
+              echo "matrix=$envs_json" >> $GITHUB_OUTPUT
+            fi
   job2:
     needs: job1
     runs-on: ubuntu-latest
