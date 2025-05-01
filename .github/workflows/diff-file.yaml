@@ -51,7 +51,7 @@ jobs:
               echo 'matrix=[]' > $GITHUB_OUTPUT
             else
               # DETECTED_ENVIRONMENTS配列をJSON配列に変換
-              envs_json=$(printf '%s\n' "${DETECTED_ENVIRONMENTS[@]}" | jq -R . | jq -s .)
+              envs_json=$(printf '%s\n' "${DETECTED_ENVIRONMENTS[@]}" | jq -R . | jq -s -c .)
               echo "matrix=$envs_json"
               echo "matrix=$envs_json" >> $GITHUB_OUTPUT
             fi
