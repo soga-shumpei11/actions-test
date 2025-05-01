@@ -65,5 +65,4 @@ jobs:
       - name: Print Environment
         run: |
           echo "Environment: ${{ matrix.environment }}"
-          echo "Environment2: ${{ fromJSON(needs.job1.outputs.matrix) }}"
  
