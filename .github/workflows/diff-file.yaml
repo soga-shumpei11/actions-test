@@ -46,7 +46,7 @@ jobs:
             # 環境が変更されていない場合は空の配列を出力
             if [ ${#DETECTED_ENVIRONMENTS[@]} -eq 0 ]; then
               echo "No environments changed."
-              echo 'matrix=["dev"]' > $GITHUB_OUTPUT
+              echo 'matrix=[]' > $GITHUB_OUTPUT
             else
               # DETECTED_ENVIRONMENTS配列をJSON配列に変換
               envs_json=$(printf '%s\n' "${DETECTED_ENVIRONMENTS[@]}" | jq -R . | jq -s -c .)
