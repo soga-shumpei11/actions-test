@@ -6,37 +6,56 @@ on:
   #   paths:
   #     - 'xxx/*/version.json'
 jobs:
-    job1:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Check out repository code
-            uses: actions/checkout@v4.2.2
-          - name: Print Environment
-            run: |
-              set -euo pipefail
+  job1:
+      runs-on: ubuntu-latest
+      outputs:
+        matrix: ${{ steps.changed_environments.outputs.matrix }}
+      steps:
+        - name: Check out repository code
+          uses: actions/checkout@v4.2.2
+        - name: Print Environment
+          id: changed_environments
+          run: |
+            set -euo pipefail
 
-              git fetch origin ${{ github.event.before }} --depth=1
+            git fetch origin ${{ github.event.before }} --depth=1
 
-              ENVIRONMENTS=(dev stg prd)
-              DETECTED_ENVIRONMENTS=()
+            ENVIRONMENTS=(dev stg prd)
+            DETECTED_ENVIRONMENTS=()
 
-              echo "github.event.before: ${{ github.event.before }}"
-              echo "github.sha: ${{ github.sha }}"
+            echo "github.event.before: ${{ github.event.before }}"
+            echo "github.sha: ${{ github.sha }}"
 
-              # 環境ごとに変更があるか確認。
-              for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
-                # 過去、現在のコミットのversionを取得
-                before_version=$(git show ${{ github.event.before }}:xxx/${ENVIRONMENT}/version.json | jq -r '.version')
-                current_version=$(git show ${{ github.sha }}:xxx/${ENVIRONMENT}/version.json | jq -r '.version')
+            # 環境ごとに変更があるか確認。
+            for ENVIRONMENT in ${ENVIRONMENTS[@]}; do
+              # 過去、現在のコミットのversionを取得
+              before_version=$(git show ${{ github.event.before }}:xxx/${ENVIRONMENT}/version.json | jq -r '.version')
+              current_version=$(git show ${{ github.sha }}:xxx/${ENVIRONMENT}/version.json | jq -r '.version')
 
-                # バージョンの差を確認
-                if [ "$before_version" != "$current_version" ]; then
-                  echo "Version has changed: $before_version -> $current_version"
-                  DETECTED_ENVIRONMENTS+=("$ENVIRONMENT")
-                else
-                  echo "Version has not changed: $current_version"
-                fi
-              done
+              # バージョンの差を確認
+              if [ "$before_version" != "$current_version" ]; then
+                echo "Version has changed: $before_version -> $current_version"
+                DETECTED_ENVIRONMENTS+=("$ENVIRONMENT")
+              else
+                echo "Version has not changed: $current_version"
+              fi
+            done
 
-              echo "DETECTED_ENVIRONMENTS: ${DETECTED_ENVIRONMENTS[@]}"
+            echo "DETECTED_ENVIRONMENTS: ${DETECTED_ENVIRONMENTS[@]}"
 
+            # JSON形式に変換して出力
+            envs_json=$(printf '%s\n' "${DETECTED_ENVIRONMENTS[@]}" | jq -R . | jq -s .)
+            echo "envs_json: $envs_json"
+            echo "matrix=$envs_json" >> $GITHUB_OUTPUT
+  job2:
+    needs: job1
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: ${{ fromJSON(needs.job1.outputs.matrix) }}
+    steps:
+      - name: Print Environment
+        run: |
+          echo "Environment: ${{ matrix.environment }}"
+          echo "Environment2: ${{ fromJSON(needs.job1.outputs.matrix) }}"
+ 
