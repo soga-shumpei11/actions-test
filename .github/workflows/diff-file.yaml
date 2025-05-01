@@ -43,8 +43,6 @@ jobs:
 
             echo "DETECTED_ENVIRONMENTS: ${DETECTED_ENVIRONMENTS[@]}"
 
-            # JSON形式に変換して出力
-
             # 環境が変更されていない場合は空の配列を出力
             if [ ${#DETECTED_ENVIRONMENTS[@]} -eq 0 ]; then
               echo "No environments changed."
